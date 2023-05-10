@@ -1,0 +1,117 @@
+[gd_scene load_steps=16 format=3 uid="uid://ci3uhlar8rakp"]
+
+[ext_resource type="Shader" path="res://outline.gdshader" id="1_jtkso"]
+[ext_resource type="Texture2D" uid="uid://cr41vh5xl1lgu" path="res://sprites/demo-char.png" id="2_y1oou"]
+[ext_resource type="Script" path="res://scripts/Demo-char.gd" id="3_wrdnn"]
+[ext_resource type="Texture2D" uid="uid://kc05peskq0dr" path="res://sprites/bartop.png" id="4_ncarg"]
+[ext_resource type="Script" path="res://scripts/camera.gd" id="5_kl5w4"]
+[ext_resource type="Texture2D" uid="uid://deufdoqp7p0r7" path="res://sprites/temp.png" id="6_pm4ut"]
+[ext_resource type="Texture2D" uid="uid://d25u46d0jg3f2" path="res://sprites/cup-basic.png" id="7_osiu4"]
+[ext_resource type="Texture2D" uid="uid://xgfx85uysg0l" path="res://sprites/muddler.png" id="8_vn2hg"]
+[ext_resource type="Script" path="res://scripts/physic-object.gd" id="9_6hbu5"]
+[ext_resource type="Texture2D" uid="uid://bngy8loel1ee3" path="res://icon.svg" id="9_66jlq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0hslp"]
+shader = ExtResource("1_jtkso")
+shader_parameter/color = Color(1, 0.960784, 0.333333, 1)
+shader_parameter/width = 0.0
+shader_parameter/pattern = 0
+shader_parameter/inside = false
+shader_parameter/add_margins = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_krhg7"]
+size = Vector2(105, 111.667)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dujsi"]
+size = Vector2(72.7904, 166.972)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oulde"]
+size = Vector2(79, 23)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8nout"]
+size = Vector2(172.5, 144.5)
+
+[node name="main-bar" type="Node2D"]
+
+[node name="Demo-char" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_0hslp")
+position = Vector2(-75, 16)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("2_y1oou")
+script = ExtResource("3_wrdnn")
+
+[node name="hover-detector" type="Area2D" parent="Demo-char"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Demo-char/hover-detector"]
+position = Vector2(1.94444, -80.8333)
+shape = SubResource("RectangleShape2D_krhg7")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Demo-char/hover-detector"]
+position = Vector2(1.30368, -2.77499)
+rotation = -1.61283
+shape = SubResource("RectangleShape2D_dujsi")
+
+[node name="Bartop" type="Sprite2D" parent="."]
+position = Vector2(0, 78)
+texture = ExtResource("4_ncarg")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 280)
+zoom = Vector2(2.89, 2.89)
+script = ExtResource("5_kl5w4")
+pos2 = Vector2(0, 280)
+
+[node name="bar-back" type="Node2D" parent="."]
+
+[node name="Bartop" type="Sprite2D" parent="bar-back"]
+position = Vector2(0, 357)
+texture = ExtResource("4_ncarg")
+
+[node name="Temp" type="Sprite2D" parent="bar-back/Bartop"]
+position = Vector2(-16, -11)
+scale = Vector2(1, 0.59)
+texture = ExtResource("6_pm4ut")
+
+[node name="Cup-basic" type="Sprite2D" parent="bar-back"]
+position = Vector2(-121, 324)
+texture = ExtResource("7_osiu4")
+
+[node name="Icon" type="Sprite2D" parent="bar-back"]
+self_modulate = Color(0, 1, 0.0666667, 1)
+position = Vector2(-30, 339)
+scale = Vector2(0.273438, 0.242188)
+texture = ExtResource("9_66jlq")
+
+[node name="Icon2" type="Sprite2D" parent="bar-back"]
+self_modulate = Color(0.533333, 0.894118, 1, 1)
+position = Vector2(29, 340)
+scale = Vector2(0.273438, 0.242188)
+texture = ExtResource("9_66jlq")
+
+[node name="object-basic" type="Node2D" parent="bar-back" node_paths=PackedStringArray("clickShape")]
+position = Vector2(121, 341)
+rotation = 1.5708
+script = ExtResource("9_6hbu5")
+clickShape = NodePath("Muddler/click-detect/clickShape")
+
+[node name="Muddler" type="Sprite2D" parent="bar-back/object-basic"]
+position = Vector2(-1, 29)
+scale = Vector2(1, 1)
+texture = ExtResource("8_vn2hg")
+
+[node name="click-detect" type="Area2D" parent="bar-back/object-basic/Muddler"]
+rotation = -1.54235
+scale = Vector2(1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="bar-back/object-basic/Muddler/click-detect"]
+shape = SubResource("RectangleShape2D_oulde")
+
+[node name="clickShape" type="CollisionShape2D" parent="bar-back/object-basic/Muddler/click-detect"]
+position = Vector2(29, 0)
+shape = SubResource("RectangleShape2D_8nout")
+disabled = true
+
+[connection signal="mouse_entered" from="Demo-char/hover-detector" to="Demo-char" method="_on_hoverdetector_mouse_entered"]
+[connection signal="mouse_exited" from="Demo-char/hover-detector" to="Demo-char" method="_on_hoverdetector_mouse_exited"]
+[connection signal="input_event" from="bar-back/object-basic/Muddler/click-detect" to="bar-back/object-basic" method="_on_clickdetect_input_event"]
+[connection signal="mouse_exited" from="bar-back/object-basic/Muddler/click-detect" to="bar-back/object-basic" method="_on_clickdetect_mouse_exited"]
